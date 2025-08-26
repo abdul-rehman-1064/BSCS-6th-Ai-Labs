@@ -1,0 +1,42 @@
+[
+  {
+    "timestamp": "2025-05-28 15:12:34.253428",
+    "user": "Do you have medium size t-shirts for men?",
+    "bot": "Yes, we do! We carry a variety of medium-size t-shirts for men. Are you looking for a specific style, like a crew neck, V-neck, or a particular color or brand? Knowing what you're looking for will help me check our current stock.\n"
+  },
+  {
+    "timestamp": "2025-05-28 15:22:56.032654",
+    "user": "Who is the president of Pakistan?",
+    "bot": "I'm sorry, I can only answer questions about clothing and shoes at TrendyWear. I cannot answer your question about the President of Pakistan. Perhaps I can help you find a stylish new outfit instead?\n"
+  },
+  {
+    "timestamp": "2025-05-28 15:24:26.173645",
+    "user": "What colors are available in women\u2019s hoodies?",
+    "bot": "Certainly! In our women's hoodies, we currently have available colors like classic black, heather grey, navy blue, a vibrant red, and a pastel pink. Availability may vary by size, but you can check the specific product page on our website for the most up-to-date information.\n"
+  },
+  {
+    "timestamp": "2025-05-28 15:25:00.440243",
+    "user": "I want to track my order.",
+    "bot": "Okay! I can help with that. Could you please provide your order number so I can track it for you?\n"
+  },
+  {
+    "timestamp": "2025-05-28 15:25:29.256089",
+    "user": "Can I cancel my order after placing it?",
+    "bot": "Yes, you can cancel your order! Please contact us with your order number as soon as possible. We'll do our best to cancel it before it ships. Once it's shipped, it becomes a return.\n"
+  },
+  {
+    "timestamp": "2025-08-26 14:10:00.858349",
+    "user": "What types ko shoes does you have in stock",
+    "bot": "Sorry, I couldn't understand that."
+  },
+  {
+    "timestamp": "2025-08-26 14:13:06.449809",
+    "user": "Do you have medium size t-shirts for men?",
+    "bot": "Sorry, I couldn't understand that."
+  },
+  {
+    "timestamp": "2025-08-26 14:13:24.326455",
+    "user": "What colors are available in women\u2019s hoodies?",
+    "bot": "Sorry, I couldn't understand that."
+  }
+]
