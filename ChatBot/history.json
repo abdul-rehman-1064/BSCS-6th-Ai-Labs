@@ -38,5 +38,10 @@
     "timestamp": "2025-08-26 14:13:24.326455",
     "user": "What colors are available in women\u2019s hoodies?",
     "bot": "Sorry, I couldn't understand that."
+  },
+  {
+    "timestamp": "2025-08-26 14:24:35.885502",
+    "user": "Do you have medium size t-shirts for men?",
+    "bot": "Yes, we do! We carry a variety of men's t-shirts in size medium. Are you looking for anything specific like a certain color, style (crew neck, V-neck), or material (cotton, blend)?\n"
   }
 ]

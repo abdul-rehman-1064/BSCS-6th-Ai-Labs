@@ -1,13 +1,29 @@
 from flask import Flask, render_template, request, jsonify
-import os
-import json
-import requests
+from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from datetime import datetime
+import os, requests, json
 
 load_dotenv()
 app = Flask(__name__)
 
+# Database config (SQLite file-based)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chatbot.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+# Chat History Model
+class ChatHistory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    user = db.Column(db.Text, nullable=False)
+    bot = db.Column(db.Text, nullable=False)
+
+# Create DB tables
+with app.app_context():
+    db.create_all()
+
+# Gemini API setup
 API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={API_KEY}"
 
@@ -21,14 +37,6 @@ Only answer questions related to {config['department']}.
 {config['prompt']}
 """
 
-# Load chat history
-HISTORY_FILE = "history.json"
-if os.path.exists(HISTORY_FILE):
-    with open(HISTORY_FILE, "r") as f:
-        chat_history = json.load(f)
-else:
-    chat_history = []
-
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -41,17 +49,10 @@ def ask():
 
     prompt = training_prompt + "\n\nCustomer: " + user_input
 
-    headers = {
-        "Content-Type": "application/json"
-    }
-
+    headers = {"Content-Type": "application/json"}
     payload = {
         "contents": [
-            {
-                "parts": [
-                    {"text": prompt}
-                ]
-            }
+            {"parts": [{"text": prompt}]}
         ]
     }
 
@@ -64,19 +65,24 @@ def ask():
         else:
             reply_text = "Sorry, I couldn't understand that."
 
-        # Save history
-        chat_history.append({
-            "timestamp": str(datetime.now()),
-            "user": user_input,
-            "bot": reply_text
-        })
-
-        with open(HISTORY_FILE, "w") as f:
-            json.dump(chat_history, f, indent=2)
+        # Save chat to database
+        new_chat = ChatHistory(user=user_input, bot=reply_text)
+        db.session.add(new_chat)
+        db.session.commit()
 
         return jsonify({"reply": reply_text})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+# Optional: Get full chat history
+@app.route("/history")
+def history():
+    chats = ChatHistory.query.order_by(ChatHistory.timestamp.asc()).all()
+    history_data = [
+        {"timestamp": c.timestamp.strftime("%Y-%m-%d %H:%M:%S"), "user": c.user, "bot": c.bot}
+        for c in chats
+    ]
+    return jsonify(history_data)
 
 if __name__ == "__main__":
     app.run(debug=True)
