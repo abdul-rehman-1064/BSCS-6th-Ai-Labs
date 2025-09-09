@@ -37,6 +37,9 @@ Only answer questions related to {config['department']}.
 {config['prompt']}
 """
 
+# Get history limit from .env (default = 5)
+HISTORY_LIMIT = int(os.getenv("CHAT_HISTORY_LIMIT", 5))
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -47,7 +50,17 @@ def ask():
     if not user_input:
         return jsonify({"error": "Empty input"}), 400
 
-    prompt = training_prompt + "\n\nCustomer: " + user_input
+    # Get limited chat history for context
+    history = ChatHistory.query.order_by(ChatHistory.timestamp.desc()).limit(HISTORY_LIMIT).all()
+    history = list(reversed(history))  # oldest → newest
+
+    # Build conversation history string
+    conversation = ""
+    for h in history:
+        conversation += f"Customer: {h.user}\nAssistant: {h.bot}\n"
+
+    # Add current user input
+    prompt = training_prompt + "\n\n" + conversation + f"Customer: {user_input}\nAssistant:"
 
     headers = {"Content-Type": "application/json"}
     payload = {
@@ -86,3 +99,4 @@ def history():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
