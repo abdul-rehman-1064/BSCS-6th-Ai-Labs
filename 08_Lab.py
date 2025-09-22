@@ -1,6 +1,4 @@
-import heapq
 
-# Graph representation (Bucharest Map example simplified)
 graph = {
     'Arad': {'Zerind': 75, 'Sibiu': 140, 'Timisoara': 118},
     'Zerind': {'Arad': 75, 'Oradea': 71},
@@ -18,7 +16,6 @@ graph = {
     'Giurgiu': {'Bucharest': 90}
 }
 
-# Heuristic values (straight-line distance to Bucharest)
 h = {
     'Arad': 366, 'Zerind': 374, 'Sibiu': 253, 'Timisoara': 329,
     'Oradea': 380, 'Lugoj': 244, 'Mehadia': 241, 'Drobeta': 242,
@@ -26,29 +23,32 @@ h = {
     'Bucharest': 0, 'Giurgiu': 77
 }
 
-def a_star(start, goal):
-    # Priority queue (min-heap)
-    open_list = [(h[start], 0, start, [start])]  # (f, g, node, path)
-    closed_set = set()
 
-    while open_list:
-        f, g, node, path = heapq.heappop(open_list)  # best node nikalo
-        if node == goal:
-            return path, g  # path and cost
-        if node in closed_set:
-            continue
-        closed_set.add(node)
+def a_star_recursive(node, goal, visited, g):
+    if node == goal:
+        return [node], g
 
-        for neighbor, cost in graph.get(node, {}).items():
-            if neighbor not in closed_set:
-                g_new = g + cost
-                f_new = g_new + h[neighbor]
-                heapq.heappush(open_list, (f_new, g_new, neighbor, path + [neighbor]))
+    visited.add(node)
+    best_path, best_cost = None, float("inf")
 
-    return None, float('inf')
+    for neighbor, cost in graph.get(node, {}).items():
+        if neighbor not in visited:
+            g_new = g + cost
+            f_new = g_new + h[neighbor]
+
+            # Recursive call
+            path, total_g = a_star_recursive(neighbor, goal, visited.copy(), g_new)
+
+            if path is not None:
+                f_val = total_g + h[path[-1]]  # total f value
+                if f_val < best_cost:
+                    best_path = [node] + path
+                    best_cost = total_g
+
+    return best_path, best_cost
 
 
-# Run the algorithm
-path, cost = a_star("Arad", "Bucharest")
+# Run the recursive A*
+path, cost = a_star_recursive("Arad", "Bucharest", set(), 0)
 print("Path found:", " -> ".join(path))
 print("Total cost:", cost)
